@@ -2,14 +2,14 @@ version: "3"
 
 services:
   rng:
-    build: dockercoins/rng
-    image: ${REGISTRY-127.0.0.1:5000}/rng:${TAG-latest}
+    image: johnharris85/dc-rng:1.0
     deploy:
       mode: global
+    networks:
+    - dc-net
 
   hasher:
-    build: dockercoins/hasher
-    image: ${REGISTRY-127.0.0.1:5000}/hasher:${TAG-latest}
+    image: johnharris85/dc-hasher:1.0
     deploy:
       replicas: 7
       update_config:
@@ -18,18 +18,27 @@ services:
         max_failure_ratio: .5
         monitor: 5s
         parallelism: 1
+    networks:
+    - dc-net
 
   webui:
-    build: dockercoins/webui
-    image: ${REGISTRY-127.0.0.1:5000}/webui:${TAG-latest}
+    image: johnharris85/dc-webui:1.0
     ports:
     - "8000:80"
+    networks:
+    - dc-net
 
   redis:
     image: redis
+    networks:
+    - dc-net
 
   worker:
-    build: dockercoins/worker
-    image: ${REGISTRY-127.0.0.1:5000}/worker:${TAG-latest}
+    image: johnharris85/dc-worker:1.0
     deploy:
       replicas: 10
+    networks:
+    - dc-net
+
+networks:
+  dc-net:
